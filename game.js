@@ -16,6 +16,8 @@ function drawObstacle() {
 let canvasWidth = 400;
 let canvasHeight = 400;
 let floor = 300;
+const gravity = 1.5; 
+let platforms = []; 
 let character = new Character(50, 50, 50, 50);
 
 function draw() {
@@ -24,9 +26,9 @@ function draw() {
     character.draw();
     platform.draw();
 
-    platform.x -= 10;
-    if (platform.x + platform.w < 0) {
-        platform.x = 500;
+    platform.y += 5;
+    if (platform.y > canvasHeight) {
+        platform.y = -platform.h;
     }
 
     if (

@@ -6,7 +6,7 @@ export let platform = {
 
     draw() {
         push();
-        fill("blue");
+        fill("pink");
         rect(this.x, this.y, this.w, this.h);
         pop();
     },

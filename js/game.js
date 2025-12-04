@@ -27,9 +27,6 @@ console.log(platforms);
 function draw() {
   background(135, 206, 235); // sky blue
 
-  // Draw sun
-
-
   // Apply gravity
   player.applyGravity(1);
 
@@ -53,21 +50,31 @@ function draw() {
     player.vy = 0;
   }
 
+  if (keyIsDown(LEFT_ARROW)) {
+    player.x -= 10; //////move left
+  }
+
+  if (keyIsDown(RIGHT_ARROW)) {
+    player.x += 10; /////move right 
+  }
+
   // Draw player
   player.draw();
-}
 
-// Jump when key pressed
-function keyPressed() {
-  // Jump from floor
-  if (player.y + player.h >= canvasHeight) {
-    player.vy = -15;
-  }
+} //////end draw function
 
-  // Jump from platform (allow small tolerance)
-  for (let p of platforms) {
-    if (Math.abs(player.y + player.h - p.y) < 5) {
+  // Jump when key pressed
+  function keyPressed() {
+    // Jump from floor
+    if (player.y + player.h >= canvasHeight) {
       player.vy = -15;
     }
+
+    // Jump from platform (allow small tolerance)
+    for (let p of platforms) {
+      if (Math.abs(player.y + player.h - p.y) < 5) {
+        player.vy = -15;
+      }
+    }
   }
-}
+

@@ -4,7 +4,8 @@ export default class Character {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.vy = 0; // vertical speed
+    this.vy = 0;
+    this.vx = 0; // vertical speed
   }
 
   draw() {

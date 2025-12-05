@@ -40,7 +40,32 @@ function setup() {
 
 console.log(platforms);
 
+function showStartScreen(){
+  background(255, 105, 180); 
+  textAlign(CENTER, CENTER); 
+  textSize(40); 
+  fill(255); 
+  
+  fill(255, 255, 0); 
+  text("Sun Jump", canvasWidth / 2, 200); 
+  text("START!", canvasWidth / 2, 300); 
+  }
+
+  function mousePressed(){
+    if (gameState === "start") {
+      gameState = "game"; 
+    }
+  }
+
+
 function draw() {
+
+  if(gameState === "start"){
+    //draw startscreen 
+   showStartScreen(); 
+   return;   
+  }
+
   background(135, 206, 235); // sky blue
 
   // Apply gravity

@@ -6,6 +6,7 @@ export default class Character {
     this.h = h;
     this.vy = 0;
     this.vx = 0; // vertical speed
+    //score
   }
 
   draw() {

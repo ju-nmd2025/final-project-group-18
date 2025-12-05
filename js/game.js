@@ -14,10 +14,11 @@ platform1 = new Platform(50, 300, 100, 20);
 platform2 = new Platform(200, 200, 100, 20);
 
 function spawnNewPlatform(){
-  let x = Math.floor(Math.random() * (canvasWidth - 100)); // random x 
-  let y = Math.floor(Math.random() * canvasHeight); // random y 
   let w = 100; 
   let h = 20; 
+
+  let x = Math.floor(Math.random() * (canvasWidth - w)); // random x 
+  let y = Math.floor(Math.random() * canvasHeight); // random y 
 
   let newPlatform = new Platform(x, y, w, h); 
   platforms.push(newPlatform); 
@@ -51,10 +52,38 @@ function showStartScreen(){
   }
 
   function mousePressed(){
-    if (gameState === "start") {
+    if (gameState === "start" || gameState === "gameOver") {
+      resetGame(); 
       gameState = "game"; 
     }
   }
+
+  function showGameOverScreen() {
+    background(255, 165, 0); 
+    textAlign(CENTER, CENTER); 
+    textSize(40); 
+ 
+    fill(255, 0, 0); 
+    text("GAME OVER", canvasWidth / 2, 250); 
+
+    textSize(20); 
+    fill(255); 
+    text("Click to restart", canvasWidth / 2, 300); 
+  }
+
+
+  function resetGame() {
+    player.x = 200; 
+    player.y = 50; 
+    player.vy = 0; 
+    // reset score
+  
+
+  platforms = []; // never used ?
+  for (let i = 0; i < 10; i++) {
+    spawnNewPlatform(); 
+  }
+}
 
 
 function draw() {
@@ -63,6 +92,11 @@ function draw() {
     //draw startscreen 
    showStartScreen(); 
    return;   
+  }
+
+  if (gameState === "gameOver") {
+    showGameOverScreen(); 
+    return; 
   }
 
   background(135, 206, 235); // sky blue
@@ -84,12 +118,11 @@ function draw() {
     // Check collision
     player.checkCollision(p);
   }
+  
+ if (player.y > canvasHeight) {
+    gameState = "gameOver"; 
+  } 
 
-  // Floor check
-  if (player.y + player.h >= canvasHeight) {
-    player.y = canvasHeight - player.h;
-    player.vy = 0;
-  }
 
   if (keyIsDown(LEFT_ARROW)) {
     player.x -= 10; //////move left

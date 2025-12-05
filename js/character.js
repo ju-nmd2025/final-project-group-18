@@ -7,6 +7,7 @@ export default class Character {
     this.vy = 0;
     this.vx = 0; // vertical speed
     //score
+   // this.vx = 0; // vertical speed
   }
 
   draw() {
@@ -18,21 +19,21 @@ export default class Character {
 
   applyGravity(gravity) {
     this.vy += gravity;
-    this.y += this.vy;
-  }
-
-  checkCollision(platform) {
-    if (
-      this.vy > 0 &&
-      this.x + this.w > platform.x &&
-      this.x < platform.x + platform.w &&
-      this.y + this.h >= platform.y &&
-      this.y + this.h <= platform.y + this.vy
-    ) {
-      this.y = platform.y - this.h; // land on top
-      this.vy = -15; // bounce
-      return true;
-    }
-    return false;
   }
 }
+
+  // checkCollision(platform) {
+  //   if (
+  //     this.vy > 0 &&
+  //     this.x + this.w > platform.x &&
+  //     this.x < platform.x + platform.w &&
+  //     this.y + this.h >= platform.y &&
+  //     this.y + this.h <= platform.y + this.vy
+  //   ) {
+  //     this.y = platform.y - this.h; // land on top
+  //     this.vy = -15; // bounce
+  //     return true;
+  //   }
+  //   return false;
+  // }
+

@@ -7,19 +7,35 @@ let player;
 let platform1;
 let platform2;
 let platforms = [];
+let gameState = "start";
 
-player = new Character(200, 50, 50, 50);
+player = new Character(200, 500, 50, 50);
 platform1 = new Platform(50, 300, 100, 20);
 platform2 = new Platform(200, 200, 100, 20);
+
+function generateInitialPlatforms() {
+  let initialCount = 10;
+  let spacing = canvasHeight / initialCount;
+  platforms = [];
+
+  for (let i = 0; i < initialCount; i++) {
+    let y = canvasHeight - (i * spacing);
+    let x = Math.floor(random(50, canvasWidth - 150));
+
+    if (i === 0) {
+      y = canvasHeight - 20;
+    }
+
+    platforms.push(new Platform(x, Math.floor(y), 100, 20));
+  }
+}
+
 
 function setup() {
   // Optional: add more platforms dynamically if needed
   createCanvas(canvasWidth, canvasHeight);
-}
 
-if (platforms.length === 0) {
-  platforms.push(platform1);
-  platforms.push(platform2);
+  generateInitialPlatforms();
 }
 
 console.log(platforms);
@@ -29,26 +45,7 @@ function draw() {
 
   // Apply gravity
   player.applyGravity(1);
-
-  // Draw and scroll platforms, check collisions
-  for (let p of platforms) {
-    p.draw();
-    p.y -= 2; // scroll upward
-
-    // Reset platform if it moves off the top
-    if (p.y + p.h < 0) {
-      p.y = canvasHeight;
-    }
-
-    // Check collision
-    player.checkCollision(p);
-  }
-
-  // Floor check
-  if (player.y + player.h >= canvasHeight) {
-    player.y = canvasHeight - player.h;
-    player.vy = 0;
-  }
+  player.y += player.vy;
 
   if (keyIsDown(LEFT_ARROW)) {
     player.x -= 10; //////move left
@@ -58,23 +55,48 @@ function draw() {
     player.x += 10; /////move right 
   }
 
-  // Draw player
-  player.draw();
+  if (player.x + player.w < 0) {
+    player.x = canvasWidth;
+  } else if (player.x > canvasWidth) {
+    player.x = -player.w;
+  }
+  
+  for (let p of platforms) {
+  p.draw();
 
-} //////end draw function
+  if (
+    player.vy > 0 &&
+    player.x + player.w > p.x &&
+    player.x < p.x + p.w &&
+    player.y + player.h > p.y &&
+    player.y + player.h < p.y + player.vy
+  ) {
+    player.vy = -20;
+  }
+}
 
-  // Jump when key pressed
-  function keyPressed() {
-    // Jump from floor
-    if (player.y + player.h >= canvasHeight) {
-      player.vy = -15;
+  if (player.y < 200) {
+  let scrollSpeed = 200 - player.y;
+    player.y = 200;
+
+    let tempHighestY =Infinity;
+    for (let p of platforms) {
+      if (p.y < tempHighestY) {
+        tempHighestY = p.y;
+      }
     }
 
-    // Jump from platform (allow small tolerance)
     for (let p of platforms) {
-      if (Math.abs(player.y + player.h - p.y) < 5) {
-        player.vy = -15;
+      p.y += scrollSpeed;
+
+      if (p.y > canvasHeight) {
+        p.y = tempHighestY - 100;
+        p.x = Math.floor(random(50, canvasWidth - 150));
       }
     }
   }
-
+  
+  // Draw player
+  player.draw();
+} 
+  

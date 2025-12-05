@@ -79,10 +79,10 @@ function showStartScreen(){
     // reset score
   
 
-  platforms = []; // never used ?
-  for (let i = 0; i < 10; i++) {
-    spawnNewPlatform(); 
-  }
+  // platforms = []; // never used ?
+  // for (let i = 0; i < 10; i++) {
+  //   spawnNewPlatform(); 
+  // }
 }
 
 
@@ -103,27 +103,28 @@ function draw() {
 
   // Apply gravity
   player.applyGravity(1);
-
-  // Draw and scroll platforms, check collisions
-  for (let p of platforms) {
-    p.draw();
-    p.y += 2; // scroll upward
-
-    // Reset platform if it moves off the top
-    if (p.y > canvasHeight) {
-      p.y = -20; 
-      p.x = Math.floor(Math.random() * (canvasWidth - p.w)); 
-    }
-
-    // Check collision
-    player.checkCollision(p);
-  }
-  
- if (player.y > canvasHeight) {
-    gameState = "gameOver"; 
-  } 
-
   player.y += player.vy;
+
+//////   // Draw and scroll platforms, check collisions
+//   for (let p of platforms) {
+//     p.draw();
+//     p.y += 2; // scroll upward
+
+//     // Reset platform if it moves off the top
+//     if (p.y > canvasHeight) {
+//       p.y = -20; 
+//       p.x = Math.floor(Math.random() * (canvasWidth - p.w)); 
+//     }
+
+//   //   // Check collision
+//   //   player.checkCollision(p);
+//   // }
+  
+//  if (player.y > canvasHeight) {
+//     gameState = "gameOver"; 
+//   } 
+
+//   player.y += player.vy;
 
   if (keyIsDown(LEFT_ARROW)) {
     player.x -= 10; //////move left
@@ -173,8 +174,11 @@ function draw() {
       }
     }
   }
+
+  if (player.y > canvasHeight) {
+    gameState = "gameOver";
+  }
   
   // Draw player
   player.draw();
 } 
-  

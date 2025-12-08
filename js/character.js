@@ -11,14 +11,29 @@ export default class Character {
   }
 
   draw() {
-  fill("yellow");
-  stroke("orange");
-  strokeWeight(20);
-  circle(this.x, this.y, 100);
+    fill("yellow");
+    stroke("orange");
+    strokeWeight(10);
+    circle(this.x, this.y, 80);
   }
 
   applyGravity(gravity) {
     this.vy += gravity;
+  }
+
+  checkCollision(platform) {
+    if (
+      this.vy > 0 &&
+      this.x + this.w > platform.x &&
+      this.x < platform.x + platform.w &&
+      this.y + this.h >= platform.y &&
+      this.y + this.h <= platform.y + this.vy
+    ) {
+      this.y = platform.y - this.h; // land on top
+      this.vy = -24; // bounce
+      return true;
+    }
+    return false;
   }
 }
 

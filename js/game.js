@@ -181,4 +181,4 @@ function draw() {
   
   // Draw player
   player.draw();
-} 
+}

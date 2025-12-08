@@ -8,15 +8,14 @@ export default class Character {
   }
 
   draw() {
-  fill("yellow");
-  stroke("orange");
-  strokeWeight(20);
-  circle(this.x, this.y, 100);
+    fill("yellow");
+    stroke("orange");
+    strokeWeight(10);
+    circle(this.x, this.y, 80);
   }
 
   applyGravity(gravity) {
     this.vy += gravity;
-    this.y += this.vy;
   }
 
   checkCollision(platform) {
@@ -28,7 +27,7 @@ export default class Character {
       this.y + this.h <= platform.y + this.vy
     ) {
       this.y = platform.y - this.h; // land on top
-      this.vy = -15; // bounce
+      this.vy = -24; // bounce
       return true;
     }
     return false;

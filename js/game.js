@@ -7,67 +7,186 @@ let player;
 let platform1;
 let platform2;
 let platforms = [];
+let gameState = "start";
 
-player = new Character(200, 50, 50, 50);
+player = new Character(200, 500, 50, 50);
 platform1 = new Platform(50, 300, 100, 20);
 platform2 = new Platform(200, 200, 100, 20);
 
-function setup() {
-  // Optional: add more platforms dynamically if needed
-  createCanvas(canvasWidth, canvasHeight);
+function generateInitialPlatforms() {
+  let initialCount = 10;
+  let spacing = canvasHeight / initialCount;
+  platforms = [];
+
+  for (let i = 0; i < initialCount; i++) {
+    let y = canvasHeight - i * spacing;
+    let w = Math.floor(random(60, 120));
+    let x = Math.floor(random(20, canvasWidth - w - 20));
+
+    if (i === 0) {
+      y = canvasHeight - 20;
+      w = 400;
+      x = (canvasWidth / 2) - (w / 2);
+    }
+
+    platforms.push(new Platform(x, Math.floor(y), w, 20));
+  }
 }
 
-if (platforms.length === 0) {
-  platforms.push(platform1);
-  platforms.push(platform2);
+function setup() {
+  createCanvas(canvasWidth, canvasHeight);
+
+  
+
+  generateInitialPlatforms();
+  //frameRate();
 }
 
 console.log(platforms);
 
-function draw() {
-  background(135, 206, 235); // sky blue
-
-  // Draw sun
-
-
-  // Apply gravity
-  player.applyGravity(1);
-
-  // Draw and scroll platforms, check collisions
-  for (let p of platforms) {
-    p.draw();
-    p.y -= 2; // scroll upward
-
-    // Reset platform if it moves off the top
-    if (p.y + p.h < 0) {
-      p.y = canvasHeight;
-    }
-
-    // Check collision
-    player.checkCollision(p);
-  }
-
-  // Floor check
-  if (player.y + player.h >= canvasHeight) {
-    player.y = canvasHeight - player.h;
-    player.vy = 0;
-  }
-
-  // Draw player
-  player.draw();
+function showStartScreen() {
+  background(255, 105, 180);
+  textAlign(CENTER, CENTER);
+  textSize(40);
+  fill(255);
+  fill(255, 255, 0);
+  text("Sun Jump", canvasWidth / 2, 200);
+  text("START!", canvasWidth / 2, 300);
 }
 
-// Jump when key pressed
-function keyPressed() {
-  // Jump from floor
-  if (player.y + player.h >= canvasHeight) {
-    player.vy = -15;
+function mousePressed() {
+  if (gameState === "start" || gameState === "gameOver") {
+    resetGame();
+    gameState = "game";
+  }
+}
+
+function showGameOverScreen() {
+  background(255, 165, 0);
+  textAlign(CENTER, CENTER);
+  textSize(40);
+  fill(255, 0, 0);
+  text("GAME OVER", canvasWidth / 2, 250);
+
+  textSize(20);
+  fill(255);
+  text("Click to restart", canvasWidth / 2, 300);
+}
+
+function resetGame() {
+  player.x = 200;
+  player.y = canvasHeight - 70;
+  player.vy = 0;
+
+  generateInitialPlatforms();
+}
+// reset score
+
+// platforms = []; // never used ?
+// for (let i = 0; i < 10; i++) {
+// spawnNewPlatforms();
+// }
+// }
+
+function draw() {
+  if (gameState === "start") {
+    //draw startscreen
+    showStartScreen();
+    return;
   }
 
-  // Jump from platform (allow small tolerance)
+  if (gameState === "gameOver") {
+    showGameOverScreen();
+    console.log(player.vy);
+    return;
+  }
+
+  background(135, 206, 235); // sky blue
+
+  // Apply gravity
+  player.applyGravity(2);
+  player.y += player.vy;
+
+  ////// // Draw and scroll platforms, check collisions
+  // for (let p of platforms) {
+  // p.draw();
+  // p.y += 2;
+  // }
+  // // scroll upward
+  // Reset platform if it moves off the top
+  // if (p.y > canvasHeight) {
+  // p.y = -20;
+  // p.x = Math.floor(Math.random() * (canvasWidth - p.w));
+  // }
+
+  // // // Check collision
   for (let p of platforms) {
-    if (Math.abs(player.y + player.h - p.y) < 5) {
-      player.vy = -15;
+    player.checkCollision(p);
+  }
+  // // }
+  // if (player.y > canvasHeight) {
+  // gameState = "gameOver";
+  // }
+
+  // player.y += player.vy;
+
+  if (keyIsDown(LEFT_ARROW)) {
+    player.x -= 10; //////move left
+  }
+
+  if (keyIsDown(RIGHT_ARROW)) {
+    player.x += 10; /////move right
+  }
+
+  if (player.x + player.w < 0) {
+    player.x = canvasWidth;
+  } else if (player.x > canvasWidth) {
+    player.x = -player.w;
+  }
+  for (let p of platforms) {
+    p.draw();
+
+    //   if (
+    //     player.vy > 0 &&
+    //     player.x + player.w > p.x &&
+    //     player.x < p.x + p.w &&
+    //     player.y + player.h >= p.y &&
+    //     player.y + player.h <= p.y + 10
+    //   ) {
+    //     player.vy = -20;
+    //     player.y = p.y - player.h;
+    //   }
+  }
+
+  if (player.y < 200) {
+    let scrollSpeed = 200 - player.y;
+    player.y = 200;
+
+    let tempHighestY = Infinity;
+    for (let p of platforms) {
+      p.y += scrollSpeed;
+      if (p.y < tempHighestY) {
+        tempHighestY = p.y;
+      }
+    }
+
+    for (let p of platforms) {
+      if (p.y > canvasHeight) {
+        let newGap = random(80, 120);
+        p.y = tempHighestY - newGap;
+
+        let w = Math.floor(random(60, 120));
+        p.w = w;
+
+        p.x = Math.floor(random(20, canvasWidth - w - 20));
+        tempHighestY = p.y;
+      }
     }
   }
+
+  if (player.y > canvasHeight) {
+    gameState = "gameOver";
+  }
+  // Draw player
+  player.draw();
 }

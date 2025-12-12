@@ -23,13 +23,17 @@ function generateInitialPlatforms() {
     let w = Math.floor(random(60, 120));
     let x = Math.floor(random(20, canvasWidth - w - 20));
 
+    let shouldMove = random() < 0.2; 
+    let maxDistance = random(80, 150); 
+
     if (i === 0) {
       y = canvasHeight - 20;
       w = 400;
       x = (canvasWidth / 2) - (w / 2);
+      shouldMove = false; 
     }
 
-    platforms.push(new Platform(x, Math.floor(y), w, 20));
+    platforms.push(new Platform(x, Math.floor(y), w, 20, shouldMove, maxDistance));
   }
 }
 
@@ -80,13 +84,6 @@ function resetGame() {
 
   generateInitialPlatforms();
 }
-// reset score
-
-// platforms = []; // never used ?
-// for (let i = 0; i < 10; i++) {
-// spawnNewPlatforms();
-// }
-// }
 
 function draw() {
   if (gameState === "start") {
@@ -107,28 +104,13 @@ function draw() {
   player.applyGravity(2);
   player.y += player.vy;
 
-  ////// // Draw and scroll platforms, check collisions
-  // for (let p of platforms) {
-  // p.draw();
-  // p.y += 2;
-  // }
-  // // scroll upward
-  // Reset platform if it moves off the top
-  // if (p.y > canvasHeight) {
-  // p.y = -20;
-  // p.x = Math.floor(Math.random() * (canvasWidth - p.w));
-  // }
-
   // // // Check collision
   for (let p of platforms) {
-    player.checkCollision(p);
+    p.update(); 
+    player.checkCollision(p); 
+    p.draw(); 
   }
-  // // }
-  // if (player.y > canvasHeight) {
-  // gameState = "gameOver";
-  // }
 
-  // player.y += player.vy;
 
   if (keyIsDown(LEFT_ARROW)) {
     player.x -= 10; //////move left
@@ -146,16 +128,6 @@ function draw() {
   for (let p of platforms) {
     p.draw();
 
-    //   if (
-    //     player.vy > 0 &&
-    //     player.x + player.w > p.x &&
-    //     player.x < p.x + p.w &&
-    //     player.y + player.h >= p.y &&
-    //     player.y + player.h <= p.y + 10
-    //   ) {
-    //     player.vy = -20;
-    //     player.y = p.y - player.h;
-    //   }
   }
 
   if (player.y < 200) {
@@ -179,6 +151,10 @@ function draw() {
         p.w = w;
 
         p.x = Math.floor(random(20, canvasWidth - w - 20));
+        p.isMoving = random() < 0.2; // Set a chance to be moving e.g., 20% 
+        p.initialX = p.x; // Set the anchor point for the new x-position 
+        p.maxMoveX = random(80, 150); // Randomize movement range and direction 
+        p.direction = (Math.random() < 0.5) ? -1 : 1; 
         tempHighestY = p.y;
       }
     }

@@ -23,17 +23,23 @@ export default class Character {
 
   checkCollision(platform) {
     if (
-      this.vy > 0 &&
+      this.vy > 0 && // Moving downwards 
       this.x + this.w > platform.x &&
       this.x < platform.x + platform.w &&
       this.y + this.h >= platform.y &&
-      this.y + this.h <= platform.y + this.vy
-    ) {
+      this.y + this.h <= platform.y + this.vy // Small tolerance for landing 
+    ) 
+    {
       this.y = platform.y - this.h; // land on top
-      this.vy = -24; // bounce
-      return true;
+      this.vy = -25; // bounce
+
+      if (platform.isMoving) {
+        this.x += platform.speed * platform.direction; 
+      }
+
+      return true; // Collision occurred
     }
-    return false;
+    return false; // No collision occurred 
   }
 }
 

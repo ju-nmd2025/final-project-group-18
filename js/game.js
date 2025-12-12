@@ -4,14 +4,11 @@ import { Platform } from "./platform.js";
 let canvasWidth = 400;
 let canvasHeight = 600;
 let player;
-let platform1;
-let platform2;
 let platforms = [];
 let gameState = "start";
 
 player = new Character(200, 500, 50, 50);
-platform1 = new Platform(50, 300, 100, 20);
-platform2 = new Platform(200, 200, 100, 20);
+
 
 function generateInitialPlatforms() {
   let initialCount = 10;
@@ -23,30 +20,38 @@ function generateInitialPlatforms() {
     let w = Math.floor(random(60, 120));
     let x = Math.floor(random(20, canvasWidth - w - 20));
 
-    let shouldMove = random() < 0.2; 
-    let maxDistance = random(80, 150); 
+    let shouldMove = random() < 0.2;
+    let maxDistance = random(80, 150);
+
+    let isBreakable = false; // Reset for every new platform
+    let chance = random();
+    if (i > 0 && chance < 0.15) { 
+      // i > 0 ensures the starting platform isn't breakable
+      // 0.15 (15%) is your current chance for breakable platforms
+      isBreakable = true;
+    }
 
     if (i === 0) {
       y = canvasHeight - 20;
       w = 400;
-      x = (canvasWidth / 2) - (w / 2);
-      shouldMove = false; 
+      x = canvasWidth / 2 - w / 2;
+      shouldMove = false;
+      isBreakable = false;
     }
 
-    platforms.push(new Platform(x, Math.floor(y), w, 20, shouldMove, maxDistance));
+    platforms.push(
+      new Platform(x, Math.floor(y), w, 20, shouldMove, maxDistance, undefined, isBreakable));
   }
 }
 
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
 
-  
-
   generateInitialPlatforms();
   //frameRate();
 }
 
-console.log(platforms);
+console.log(platforms.Patform);
 
 function showStartScreen() {
   background(255, 105, 180);
@@ -106,11 +111,10 @@ function draw() {
 
   // // // Check collision
   for (let p of platforms) {
-    p.update(); 
-    player.checkCollision(p); 
-    p.draw(); 
+    p.update();
+    player.checkCollision(p);
+    p.draw();
   }
-
 
   if (keyIsDown(LEFT_ARROW)) {
     player.x -= 10; //////move left
@@ -125,14 +129,13 @@ function draw() {
   } else if (player.x > canvasWidth) {
     player.x = -player.w;
   }
-  for (let p of platforms) {
-    p.draw();
-
-  }
 
   if (player.y < 200) {
     let scrollSpeed = 200 - player.y;
     player.y = 200;
+
+    platforms = platforms.filter((p) => !p.isBroken);
+    // This removes them from the array completely.
 
     let tempHighestY = Infinity;
     for (let p of platforms) {
@@ -150,11 +153,18 @@ function draw() {
         let w = Math.floor(random(60, 120));
         p.w = w;
 
+        let shouldMove = random() < 0.2;
+        let maxDistance = random(80, 150);
+        let newIsBreakable = random() < 0.15;
+
         p.x = Math.floor(random(20, canvasWidth - w - 20));
-        p.isMoving = random() < 0.2; // Set a chance to be moving e.g., 20% 
-        p.initialX = p.x; // Set the anchor point for the new x-position 
-        p.maxMoveX = random(80, 150); // Randomize movement range and direction 
-        p.direction = (Math.random() < 0.5) ? -1 : 1; 
+        p.isMoving = shouldMove;
+        p.initialX = p.x; // Set the anchor point for the new x-position
+        p.maxMoveX = maxDistance;
+        p.direction = Math.random() < 0.5 ? -1 : 1;
+        p.isBreakable = newIsBreakable;
+        p.isBroken = false;
+
         tempHighestY = p.y;
       }
     }
@@ -163,6 +173,11 @@ function draw() {
   if (player.y > canvasHeight) {
     gameState = "gameOver";
   }
+
+  for (let p of platforms) {
+    p.draw();
+  }
+
   // Draw player
   player.draw();
 }

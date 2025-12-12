@@ -1,4 +1,3 @@
-
 export default class Platform {
   constructor(x, y, w, h, isMoving = false, maxMoveX = 100, speed = 1.5) {
     this.x = x;

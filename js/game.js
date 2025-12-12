@@ -195,7 +195,3 @@ window.draw = draw;
 window.addEventListener("click", function (event) {
   mousePressed();
 });
-
-window.addEventListener("keydown", function (event) {
-  keyIsDown();
-});

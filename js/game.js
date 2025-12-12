@@ -62,8 +62,6 @@ function setup() {
 
 window.setup = setup;
 
-console.log(platforms.Patform);
-
 function showStartScreen() {
   background(255, 105, 180);
   textAlign(CENTER, CENTER);
@@ -196,7 +194,7 @@ window.draw = draw;
 
 window.addEventListener("click", function (event) {
   mousePressed();
-})
+});
 
 window.addEventListener("keydown", function (event) {
   keyIsDown();

@@ -9,7 +9,6 @@ let gameState = "start";
 
 player = new Character(200, 500, 50, 50);
 
-
 function generateInitialPlatforms() {
   let initialCount = 10;
   let spacing = canvasHeight / initialCount;
@@ -25,7 +24,7 @@ function generateInitialPlatforms() {
 
     let isBreakable = false; // Reset for every new platform
     let chance = random();
-    if (i > 0 && chance < 0.15) { 
+    if (i > 0 && chance < 0.15) {
       // i > 0 ensures the starting platform isn't breakable
       // 0.15 (15%) is your current chance for breakable platforms
       isBreakable = true;
@@ -40,7 +39,17 @@ function generateInitialPlatforms() {
     }
 
     platforms.push(
-      new Platform(x, Math.floor(y), w, 20, shouldMove, maxDistance, undefined, isBreakable));
+      new Platform(
+        x,
+        Math.floor(y),
+        w,
+        20,
+        shouldMove,
+        maxDistance,
+        undefined,
+        isBreakable
+      )
+    );
   }
 }
 
@@ -50,6 +59,8 @@ function setup() {
   generateInitialPlatforms();
   //frameRate();
 }
+
+window.setup = setup;
 
 console.log(platforms.Patform);
 
@@ -181,3 +192,12 @@ function draw() {
   // Draw player
   player.draw();
 }
+window.draw = draw;
+
+window.addEventListener("click", function (event) {
+  mousePressed();
+})
+
+window.addEventListener("keydown", function (event) {
+  keyIsDown();
+});

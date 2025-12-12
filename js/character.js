@@ -7,7 +7,7 @@ export default class Character {
     this.vy = 0;
     this.vx = 0; // vertical speed
     //score
-   // this.vx = 0; // vertical speed
+    // this.vx = 0; // vertical speed
   }
 
   draw() {
@@ -22,24 +22,22 @@ export default class Character {
   }
 
   checkCollision(platform) {
-
     if (platform.isBroken) {
       return false;
     }
-    
+
     if (
-      this.vy > 0 && // Moving downwards 
+      this.vy > 0 && // Moving downwards
       this.x + this.w > platform.x &&
       this.x < platform.x + platform.w &&
       this.y + this.h >= platform.y &&
-      this.y + this.h <= platform.y + this.vy // Small tolerance for landing 
-    ) 
-    {
+      this.y + this.h <= platform.y + this.vy // Small tolerance for landing
+    ) {
       this.y = platform.y - this.h; // land on top
       this.vy = -25; // bounce
 
       if (platform.isMoving) {
-        this.x += platform.speed * platform.direction; 
+        this.x += platform.speed * platform.direction;
       }
 
       if (platform.isBreakable) {
@@ -48,9 +46,8 @@ export default class Character {
 
       return true; // Collision occurred
     }
-    return false; // No collision occurred 
+    return false; // No collision occurred
   }
 }
 
-  
-
+export { Character };
